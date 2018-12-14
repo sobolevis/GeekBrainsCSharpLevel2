@@ -4,6 +4,10 @@ namespace Asteroids
 {
     abstract class BaseObject : ICollision
     {
+        public delegate void Message();
+
+        protected static Image ReferenceImage;
+
         protected Point Pos;
         protected Point Dir;
         protected Size Size;
@@ -43,8 +47,6 @@ namespace Asteroids
         /// <param name="o"></param>
         /// <returns></returns>
         public bool Collision(ICollision o) => o.Rect.IntersectsWith(Rect);
-
-        public abstract void SetRandomPosition();
 
     }
 }

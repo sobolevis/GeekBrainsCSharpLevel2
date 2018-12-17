@@ -19,8 +19,8 @@ namespace Asteroids
         private static Ship _ship;
         private static AidKit _aidKit;
 
-        public const int CountStars = 15;
-        public const int CountAsterouds = 25;
+        private static int _countStars = 15;
+        private static int _countAsteroids = 20;
 
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
@@ -94,26 +94,9 @@ namespace Asteroids
         /// </summary>
         public static void Load()
         {
-            // Создание корабля
             _ship = new Ship(new Point(50, Height / 2), new Point(1, 0), new Size(25, 40));
-
-            // Создание звезд
-            for (int i = 0; i < CountStars; i++)
-            {
-                var rndSize = Rnd.Next(5, 20);
-                _stars.Add(new Star(new Point(Rnd.Next(Width), Rnd.Next(Height)),
-                    new Point(Rnd.Next(5, 10), Rnd.Next(5, 10)),
-                    new Size(rndSize, rndSize)));
-            }
-
-            // Создание астероидов
-            for (int i = 0; i < CountAsterouds; i++)
-            {
-                var rndSize = Rnd.Next(5, 20);
-                _asteroids.Add(new Asteroid(new Point(Rnd.Next(Width / 2, Width), Rnd.Next(Height)),
-                    new Point(Rnd.Next(5, 10), Rnd.Next(5, 10)),
-                    new Size(rndSize, rndSize)));
-            }
+            CreateStars();
+            CreateAsteroids();
         }
 
         /// <summary>
@@ -159,6 +142,15 @@ namespace Asteroids
                         GameMessage?.Invoke($"Попадание в {nameof(asteroid)}! Нанесено урона: {bullet.Damage}");
                         asteroid.ToDamage(bullet.Damage);
                         Bullets.Remove(bullet);
+
+                        if (_ship.Heath <= 5)
+                        {
+                            GameMessage?.Invoke(
+                                $"Внимание!!! Низкий уровень здоровья!!! Осталось жизней: {_ship.Heath}");
+                            if (_aidKit == null)
+                                _aidKit = new AidKit(new Point(50, Rnd.Next(Height)), new Point(1, 0),
+                                    new Size(20, 20));
+                        }
                     }
                 }
 
@@ -174,6 +166,11 @@ namespace Asteroids
                     GameMessage?.Invoke($"{nameof(asteroid)} уничтожен! Текущий счет: {_ship.Score}");
                     _asteroids.Remove(asteroid);
                     _ship.Score++;
+                    if (_asteroids.Count == 0)
+                    {
+                        _countAsteroids++;
+                        CreateAsteroids();
+                    }
                 }
             }
 
@@ -186,12 +183,6 @@ namespace Asteroids
                     _ship.Heath += _aidKit.Health;
                     _aidKit = null;
                 }
-            
-            if (_ship.Heath <= 5)
-            {
-                GameMessage?.Invoke($"Внимание!!! Низкий уровень здоровья!!! Осталось жизней: {_ship.Heath}");
-                if (_aidKit == null) _aidKit = new AidKit(new Point(50, Rnd.Next(Height)), new Point(1, 0), new Size(20, 20));
-            }
 
             if (_ship.Heath <= 0)
             {
@@ -201,12 +192,41 @@ namespace Asteroids
         }
 
         /// <summary>
+        /// Создание астероидов
+        /// </summary>
+        public static void CreateAsteroids()
+        {
+            for (int i = 0; i < _countAsteroids; i++)
+            {
+                var rndSize = Rnd.Next(5, 20);
+                _asteroids.Add(new Asteroid(new Point(Rnd.Next(Width / 2, Width), Rnd.Next(Height)),
+                    new Point(Rnd.Next(5, 10), Rnd.Next(5, 10)),
+                    new Size(rndSize, rndSize)));
+            }
+        }
+
+        /// <summary>
+        /// Создание звезд
+        /// </summary>
+        public static void CreateStars()
+        {
+            for (int i = 0; i < _countStars; i++)
+            {
+                var rndSize = Rnd.Next(5, 20);
+                _stars.Add(new Star(new Point(Rnd.Next(Width), Rnd.Next(Height)),
+                    new Point(Rnd.Next(5, 10), Rnd.Next(5, 10)),
+                    new Size(rndSize, rndSize)));
+            }
+        }
+
+        /// <summary>
         /// Конец игры
         /// </summary>
         public static void Finish()
         {
             Timer.Stop();
-            Buffer.Graphics.DrawString("The End", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Underline), Brushes.White, 200, 100);
+            Buffer.Graphics.DrawString("The End", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Underline),
+                Brushes.White, 200, 100);
             Buffer.Render();
         }
 

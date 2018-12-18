@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Asteroids
+namespace TasksLists
 {
     public class TasksLists
     {
@@ -24,6 +24,7 @@ namespace Asteroids
             SearchWithLinq(_myInts);
             Test();
 
+            Console.WriteLine("Нажмите любую клавишу");
             Console.ReadKey();
         }
 

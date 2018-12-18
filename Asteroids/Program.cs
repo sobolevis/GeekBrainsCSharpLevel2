@@ -6,6 +6,9 @@ namespace Asteroids
     {
         static void Main()
         {
+            // Задания по спискам
+            TasksLists.Run();
+
             Form form = new Form();
             form.Width = 800;
             form.Height = 600;

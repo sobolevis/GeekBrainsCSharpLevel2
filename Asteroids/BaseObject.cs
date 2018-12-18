@@ -48,5 +48,10 @@ namespace Asteroids
         /// <returns></returns>
         public bool Collision(ICollision o) => o.Rect.IntersectsWith(Rect);
 
+        public void test()
+        {
+            
+        }
+
     }
 }

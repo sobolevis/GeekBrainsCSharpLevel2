@@ -1,24 +1,37 @@
-﻿using System.ComponentModel;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Asteroids
 {
     class Bullet : BaseObject
     {
+        public int Damage { get; }
+
+        /// <summary>
+        /// Загрузка изображения для пуль
+        /// </summary>
+        static Bullet()
+        {
+            ReferenceImage = System.Drawing.Image.FromFile("Bullet.png");
+        }
+
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="dir"></param>
         /// <param name="size"></param>
-        public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size) { }
+        public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size)
+        {
+            Image = new Bitmap(ReferenceImage, size);
+            Damage = 2;
+        }
 
         /// <summary>
         /// Отрисовка пули
         /// </summary>
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawRectangle(Pens.OrangeRed, Pos.X, Pos.Y, Size.Width, Size.Height);
+            Game.Buffer.Graphics.DrawImage(Image, Pos);
         }
 
         /// <summary>
@@ -26,15 +39,8 @@ namespace Asteroids
         /// </summary>
         public override void Update()
         {
-            Pos.X = Pos.X + 3;
+            Pos.X = Pos.X + 10;
         }
 
-        /// <summary>
-        /// Установка случайной позиции пули
-        /// </summary>
-        public override void SetRandomPosition()
-        {
-            Pos = new Point(Game.Rnd.Next(Game.Height), Game.Rnd.Next(Game.Width));
-        }
     }
 }

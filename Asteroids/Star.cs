@@ -1,11 +1,9 @@
 ﻿using System.Drawing;
-using System.Windows.Forms.VisualStyles;
 
 namespace Asteroids
 {
     class Star : BaseObject
     {
-        protected static readonly Image ReferenceImage;
 
         /// <summary>
         /// Загрузка изображения для звезд
@@ -43,9 +41,5 @@ namespace Asteroids
             if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
         }
 
-        /// <summary>
-        /// Установка случайной позиции звезды
-        /// </summary>
-        public override void SetRandomPosition() { }
     }
 }

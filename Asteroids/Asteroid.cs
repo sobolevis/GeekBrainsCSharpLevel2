@@ -4,12 +4,8 @@ namespace Asteroids
 {
     class Asteroid : BaseObject
     {
-        protected static readonly Image ReferenceImage;
-
-        /// <summary>
-        /// "Сила" астероида
-        /// </summary>
-        public int Power { get; set; }
+        public int Health { get; set; }
+        public int Damage { get; }
 
         /// <summary>
         /// Загрузка изображения для астероидов
@@ -28,7 +24,8 @@ namespace Asteroids
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
             Image = new Bitmap(ReferenceImage, size);
-            Power = 1;
+            Damage = Game.Rnd.Next(1, 3);
+            Health = Game.Rnd.Next(3, 5);
         }
 
         /// <summary>
@@ -42,14 +39,19 @@ namespace Asteroids
         /// <summary>
         /// Обновление астероида
         /// </summary>
-        public override void Update() {}
+        public override void Update()
+        {
+            Pos.X = Pos.X - Dir.X;
+            if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
+        }
 
         /// <summary>
-        /// Установка случайной позиции астероида
+        /// Получение урона
         /// </summary>
-        public override void SetRandomPosition()
+        /// <param name="damage"></param>
+        public void ToDamage(int damage)
         {
-            Pos = new Point(Game.Rnd.Next(Game.Height), Game.Rnd.Next(Game.Width));
+            Health -= damage;
         }
     }
 }

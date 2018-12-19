@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteroids", "Asteroids\Aste
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksLists", "TasksLists\TasksLists.csproj", "{CFBB5DFC-08E4-402F-827A-7A513BDBFFDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson5", "Lesson5\Lesson5.csproj", "{6587D6BC-3230-4973-87DD-377B09398AC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CFBB5DFC-08E4-402F-827A-7A513BDBFFDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFBB5DFC-08E4-402F-827A-7A513BDBFFDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFBB5DFC-08E4-402F-827A-7A513BDBFFDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6587D6BC-3230-4973-87DD-377B09398AC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6587D6BC-3230-4973-87DD-377B09398AC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6587D6BC-3230-4973-87DD-377B09398AC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6587D6BC-3230-4973-87DD-377B09398AC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

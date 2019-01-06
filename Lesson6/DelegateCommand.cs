@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Lesson6
+namespace WebAPIClient
 {
     class DelegateCommand : ICommand
     {

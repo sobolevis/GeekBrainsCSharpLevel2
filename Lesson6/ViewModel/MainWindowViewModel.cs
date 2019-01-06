@@ -1,27 +1,65 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using Lesson6.Model;
-using Lesson6.View;
+using CompanyDatabaseAccess;
 
-namespace Lesson6.ViewModel
+namespace WebAPIClient.ViewModel
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
+        static HttpClient client;
+
+        List<Department> _departments;
+        List<Employee> _employees;
         Department _selectedDepartment;
         Employee _selectedEmployee;
 
         public MainWindowViewModel()
         {
-            Init();
+            client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:50681/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            UpdateDepartmentsCommand = new DelegateCommand(UdpateDepartments);
         }
 
-        public ObservableCollection<Department> Departments { get; set; }
-        public ObservableCollection<Employee> Employees { get; set; }
+        /// <summary>
+        /// Список департаментов
+        /// </summary>
+        public List<Department> Departments
+        {
+            get
+            {
+                return _departments;
+            }
+            set
+            {
+                _departments = value;
+                OnPropertyChanged(nameof(Departments));
+            }
+        }
 
-        // Избыточная коллекция (выбор сотрудников одного департамента)
-        public ObservableCollection<Employee> Staff { get; set; }
+        /// <summary>
+        /// Список сотрудников департамента
+        /// </summary>
+        public List<Employee> Employees
+        {
+            get
+            {
+                return _employees;
+            }
+            set
+            {
+                _employees = value;
+                OnPropertyChanged(nameof(Employees));
+            }
+        }
 
         /// <summary>
         /// Выбранный департамент
@@ -32,10 +70,8 @@ namespace Lesson6.ViewModel
             set
             {
                 _selectedDepartment = value;
+                UpdateEmployees();
                 OnPropertyChanged(nameof(SelectedDepartment));
-                
-                // Метод избыточной коллекции
-                RefreshStaff();
             }
         }
 
@@ -51,8 +87,14 @@ namespace Lesson6.ViewModel
                 OnPropertyChanged(nameof(SelectedEmployee));
             }
         }
-        
+
+        /// <summary>
+        /// Команда обновления списка департаментов
+        /// </summary>
+        public ICommand UpdateDepartmentsCommand { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// Изменение свойства
         /// </summary>
@@ -60,105 +102,64 @@ namespace Lesson6.ViewModel
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public ICommand AddDepartmentCommand { get; set; }
-        public ICommand DelDepartmentCommand { get; set; }
-        public ICommand AddEmployeeCommand { get; set; }
-        public ICommand DelEmployeeCommand { get; set; }
+        }    
 
         /// <summary>
-        /// Добавить департамент
+        /// Обновление списка департаментов
         /// </summary>
         /// <param name="obj"></param>
-        private void AddDepartment(object obj)
+        async void UdpateDepartments(object obj)
         {
-           new AddDepartmentWindow(Departments).ShowDialog();
-        }
-        
-        /// <summary>
-        /// Удалить департамент
-        /// </summary>
-        /// <param name="obj"></param>
-        private void DelDepartment(object obj)
-        {
-            Departments.Remove(_selectedDepartment);
+            Departments = await GetAllDepartments();
         }
 
         /// <summary>
-        /// Добавить сотрудника
+        /// Обновление списка сотрудников департамента
         /// </summary>
-        /// <param name="obj"></param>
-        private void AddEmployee(object obj)
+        async void UpdateEmployees()
         {
-            new AddEmployeeWindow(Departments, Employees).ShowDialog();
+            List<Employee> temp = await GetAllEmployees();
+            Employees = temp.Where(x => x.Department == SelectedDepartment.Name).ToList();
         }
 
         /// <summary>
-        /// Удалить сотрудника
+        /// Получение списка всех департаментов из базы данных
         /// </summary>
-        /// <param name="obj"></param>
-        private void DelEmployee(object obj)
+        /// <returns></returns>
+        async Task<List<Department>> GetAllDepartments()
         {
-            Employees.Remove(_selectedEmployee);
-
-            // Метод избыточной коллекции
-            RefreshStaff();
-        }
-
-        // Метод избыточной коллекции
-        /// <summary>
-        /// Выборка сотрудников департамента
-        /// </summary>
-        private void RefreshStaff()
-        {
-            Staff.Clear();
-            foreach (var employee in Employees)
+            string str = client.BaseAddress + "api/Departments";
+            List<Department> departments = null;
+            try
             {
-                if (employee.Department == _selectedDepartment?.Name) Staff.Add(employee);
+                HttpResponseMessage response = await client.GetAsync(str);
+                if (response.IsSuccessStatusCode)
+                {
+                    departments = await response.Content.ReadAsAsync<List<Department>>();
+                }
             }
+            catch { }
+            return departments;
         }
 
         /// <summary>
-        /// Инициализация
+        /// Получение списка всех сотрудников из базы данных
         /// </summary>
-        private void Init()
+        /// <returns></returns>
+        async Task<List<Employee>> GetAllEmployees()
         {
-            Departments = new ObservableCollection<Department>();
-            Employees = new ObservableCollection<Employee>();
-            Staff = new ObservableCollection<Employee>();
-
-            AddDepartmentCommand = new DelegateCommand(AddDepartment);
-            DelDepartmentCommand = new DelegateCommand(DelDepartment);
-            AddEmployeeCommand = new DelegateCommand(AddEmployee);
-            DelEmployeeCommand = new DelegateCommand(DelEmployee);
-
-            GetDataBase();
-        }
-
-        /// <summary>
-        /// Заполнение базы данных
-        /// </summary>
-        private void GetDataBase()
-        {
-            Random rnd = new Random();
-            int countDepartments = 10;
-            int countEmployees = 50;
-
-            for (int i = 0; i < countDepartments; i++)
+            string path = client.BaseAddress + "api/Employees";
+            List<Employee> employees = null;
+            try
             {
-                Departments.Add(new Department($"Департамент {i + 1}", rnd.Next(countDepartments).ToString()));
+                HttpResponseMessage responseMessage = await client.GetAsync(path);
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    employees = await responseMessage.Content.ReadAsAsync<List<Employee>>();
+                }
             }
-
-            for (int i = 0; i < countEmployees; i++)
-            {
-                Employees.Add(new Employee($"Имя {i + 1 }",
-                    $"Фамилия {i + 1}",
-                    Departments[rnd.Next(countDepartments)].Name,
-                    $"Должность {i + 1}",
-                    $"Телефон {i + 1}"));
-            }
+            catch { }
+            return employees;
         }
-
     }
 }

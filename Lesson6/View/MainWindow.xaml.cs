@@ -1,4 +1,4 @@
-﻿namespace Lesson6.View
+﻿namespace WebAPIClient.View
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml

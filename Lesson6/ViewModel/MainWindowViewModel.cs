@@ -87,7 +87,12 @@ namespace WebAPIClient.ViewModel
                 OnPropertyChanged(nameof(SelectedEmployee));
             }
         }
-        
+
+        /// <summary>
+        /// Команда обновления списка департаментов
+        /// </summary>
+        public ICommand UpdateDepartmentsCommand { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -97,12 +102,7 @@ namespace WebAPIClient.ViewModel
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        /// <summary>
-        /// Команда обновления списка департаментов
-        /// </summary>
-        public ICommand UpdateDepartmentsCommand { get; set; }
+        }    
 
         /// <summary>
         /// Обновление списка департаментов

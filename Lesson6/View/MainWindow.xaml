@@ -46,8 +46,10 @@
                     <TextBox Text="{Binding SelectedEmployee.Department}" Grid.Column="1" Margin="10" Grid.Row="3" TextWrapping="Wrap"/>
                     <TextBox Text="{Binding SelectedEmployee.Post}" Grid.Column="1" Margin="10" Grid.Row="4" TextWrapping="Wrap"/>
                     <TextBox Text="{Binding SelectedEmployee.Phone}" Grid.Column="1" Margin="10" Grid.Row="5" TextWrapping="Wrap"/>
-                    <Button Content="Добавить" Command="{Binding AddEmployeeCommand}" Margin="10" Grid.Row="7" IsEnabled="False"/>
-                    <Button Content="Удалить" Command="{Binding DelEmployeeCommand}" Margin="10" Grid.Row="7" Grid.Column="1" IsEnabled="False"/>
+                    <!--
+                    <Button Content="Добавить" Command="{Binding AddEmployeeCommand}" Margin="10" Grid.Row="7"/>
+                    <Button Content="Удалить" Command="{Binding DelEmployeeCommand}" Margin="10" Grid.Row="7" Grid.Column="1"/>
+                    -->
                 </Grid>
             </Border>
             <Border Grid.Row="0" Grid.Column="0" BorderBrush="Black" BorderThickness="0 0 0 1" Margin="0,0,0,-1">
